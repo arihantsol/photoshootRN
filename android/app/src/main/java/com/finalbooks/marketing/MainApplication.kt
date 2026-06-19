@@ -1,4 +1,4 @@
-package com.photoshootrn_temp
+package com.finalbooks.marketing
 
 import android.app.Application
 import com.facebook.react.PackageList

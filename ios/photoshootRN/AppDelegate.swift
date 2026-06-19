@@ -24,7 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     window = UIWindow(frame: UIScreen.main.bounds)
 
     factory.startReactNative(
-      withModuleName: "photoshootRN_temp",
+      withModuleName: "photoshootRN",
       in: window,
       launchOptions: launchOptions
     )

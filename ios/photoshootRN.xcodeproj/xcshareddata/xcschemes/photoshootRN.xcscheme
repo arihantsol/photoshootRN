@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "photoshootRN_temp.app"
-               BlueprintName = "photoshootRN_temp"
-               ReferencedContainer = "container:photoshootRN_temp.xcodeproj">
+               BuildableName = "photoshootRN.app"
+               BlueprintName = "photoshootRN"
+               ReferencedContainer = "container:photoshootRN.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "photoshootRN_tempTests.xctest"
-               BlueprintName = "photoshootRN_tempTests"
-               ReferencedContainer = "container:photoshootRN_temp.xcodeproj">
+               BuildableName = "photoshootRNTests.xctest"
+               BlueprintName = "photoshootRNTests"
+               ReferencedContainer = "container:photoshootRN.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "photoshootRN_temp.app"
-            BlueprintName = "photoshootRN_temp"
-            ReferencedContainer = "container:photoshootRN_temp.xcodeproj">
+            BuildableName = "photoshootRN.app"
+            BlueprintName = "photoshootRN"
+            ReferencedContainer = "container:photoshootRN.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "photoshootRN_temp.app"
-            BlueprintName = "photoshootRN_temp"
-            ReferencedContainer = "container:photoshootRN_temp.xcodeproj">
+            BuildableName = "photoshootRN.app"
+            BlueprintName = "photoshootRN"
+            ReferencedContainer = "container:photoshootRN.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

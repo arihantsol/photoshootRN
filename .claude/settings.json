@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p /Users/macmini007/Documents/getmycatalogueweb-rn/android/app/src/main/java/com/finalbooks/marketing && cp /Users/macmini007/Documents/getmycatalogueweb-rn/android/app/src/main/java/com/photoshootrn/*.kt /Users/macmini007/Documents/getmycatalogueweb-rn/android/app/src/main/java/com/finalbooks/marketing/ && rm -rf /Users/macmini007/Documents/getmycatalogueweb-rn/android/app/src/main/java/com/photoshootrn)"
+    ],
+    "additionalDirectories": [
+      "/Users/macmini007/Documents/getmycatalogueweb-rn/android/app/src/main/java/com/photoshootrn"
+    ]
+  }
+}
