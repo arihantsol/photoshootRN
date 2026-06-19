@@ -1,205 +1,97 @@
-# Photoshoot Generator React Native App
+This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
-A React Native mobile app for generating AI-powered photoshoots using the same API endpoints as the web application. Built with native React Native (no Expo).
+# Getting Started
 
-## Features
+> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
 
-- 📷 Upload product images (front, back views)
-- 👤 Optional model image upload
-- ✨ Multiple photoshoot styles (Modern, Classic, Studio, Lifestyle, Minimalist)
-- 🎨 Customizable output options (on-human, mannequin, standalone)
-- 🎯 Multiple aspect ratios and dimensions
-- 💧 Watermark support
-- 🤖 Multiple AI providers (Google, OpenAI)
-- 📱 Native image gallery picker and camera support
-- ⚡ Real-time image generation with progress
+## Step 1: Start Metro
 
-## Prerequisites
+First, you will need to run **Metro**, the JavaScript build tool for React Native.
 
-- Node.js (v16+)
-- npm or yarn
-- Xcode (for iOS development)
-- Android Studio or Android SDK (for Android development)
-- Java Development Kit (JDK 11+)
+To start the Metro dev server, run the following command from the root of your React Native project:
 
-## Installation
-
-1. Navigate to the project:
-```bash
-cd getmycatalogueweb-rn
-```
-
-2. Install dependencies:
-```bash
-npm install
-# or
-yarn install
-```
-
-3. Install iOS pods (macOS only):
-```bash
-cd ios && pod install && cd ..
-```
-
-4. Create `.env` file from template:
-```bash
-cp .env.example .env
-```
-
-5. Update `.env` with your API base URL:
-```
-REACT_APP_BASE_URL=https://your-api-base-url.com
-```
-
-## Running the App
-
-### Development Server
-```bash
+```sh
+# Using npm
 npm start
+
+# OR using Yarn
+yarn start
+```
+
+## Step 2: Build and run your app
+
+With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+
+### Android
+
+```sh
+# Using npm
+npm run android
+
+# OR using Yarn
+yarn android
 ```
 
 ### iOS
-```bash
+
+For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+
+The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+
+```sh
+bundle install
+```
+
+Then, and every time you update your native dependencies, run:
+
+```sh
+bundle exec pod install
+```
+
+For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+
+```sh
+# Using npm
 npm run ios
-```
-Or with specific simulator:
-```bash
-react-native run-ios --simulator="iPhone 14"
-```
 
-### Android
-```bash
-npm run android
+# OR using Yarn
+yarn ios
 ```
 
-### Release Builds
+If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
 
-**iOS:**
-```bash
-cd ios
-xcodebuild -workspace PhotoshootGenerator.xcworkspace -scheme PhotoshootGenerator -configuration Release
-```
+This is one way to run your app — you can also build it directly from Android Studio or Xcode.
 
-**Android:**
-```bash
-cd android
-./gradlew assembleRelease
-```
+## Step 3: Modify your app
 
-## Project Structure
+Now that you have successfully run the app, let's make changes!
 
-```
-src/
-├── components/          # Reusable UI components
-│   ├── ImagePicker.tsx  # Image selection component
-│   └── FormSelect.tsx   # Select dropdown component
-├── screens/             # Main app screens
-│   └── PhotoshootScreen.tsx  # Main photoshoot generator screen
-├── services/            # API client and services
-│   └── api.ts           # API client configuration
-└── store/               # State management (Zustand)
-    └── photoshootStore.ts  # Photoshoot state
-```
+Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
 
-## API Integration
+When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
 
-The app connects to the same endpoints as the web version:
+- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
+- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
 
-- **Fetch Options**: `GET /finalbooksai/photoshoot_options`
-- **Generate Photoshoot**: `POST /finalbooksai/photoshoot`
+## Congratulations! :tada:
 
-### Request Payload
+You've successfully run and modified your React Native App. :partying_face:
 
-```typescript
-{
-  aiProvider: string;           // "google" | "openai"
-  frontViewImage: string;       // Base64 encoded image
-  productName: string;
-  productType: string;          // "fashion" | "jewelry" | "electronics" | "home"
-  photoshootStyle: string;      // "modern" | "classic" | "studio" | "lifestyle" | "minimalist"
-  outputType: string;           // "on-human" | "mannequin" | "standalone"
-  numberOfOptions: number;      // 1-5
-  aspectRatio: string;          // "1:1" | "16:9" | "9:16" | "4:3"
-  watermarkType: string;        // "none" | "logo" | "text"
-  
-  // Optional fields
-  backViewImage?: string;
-  modelImage?: string;
-  customPrompt?: string;
-  modelType?: string;
-  modelAge?: number;
-  // ... plus 20+ additional enhancement options
-}
-```
+### Now what?
 
-## State Management
+- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
+- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
 
-Using Zustand for simple, efficient state management:
+# Troubleshooting
 
-```typescript
-const { 
-  images,           // Generated images
-  loading,          // Loading state
-  error,           // Error message
-  options,         // Available options from API
-  generatePhotoshoot,  // Action to generate
-  fetchOptions,    // Action to fetch options
-} = usePhotoshootStore();
-```
+If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
 
-## Future Enhancements
+# Learn More
 
-- [ ] Image editing/cropping before upload
-- [ ] Preview before generation
-- [ ] Batch processing multiple products
-- [ ] Download/share generated images
-- [ ] Saved presets for quick generation
-- [ ] Generation history
-- [ ] Advanced parameter tuning
-- [ ] Offline mode support
-- [ ] Dark mode
-- [ ] Internationalization
+To learn more about React Native, take a look at the following resources:
 
-## Environment Variables
-
-```env
-REACT_APP_BASE_URL=       # API base URL (required)
-```
-
-## Troubleshooting
-
-### Camera/Gallery Permission Issues
-The app requests permissions when needed. On iOS, add the following to `app.json`:
-```json
-{
-  "ios": {
-    "infoPlist": {
-      "NSPhotoLibraryUsageDescription": "Allow access to photos",
-      "NSCameraUsageDescription": "Allow access to camera"
-    }
-  }
-}
-```
-
-### API Connection Issues
-1. Verify `.env` file has correct `REACT_APP_BASE_URL`
-2. Check network connectivity
-3. Ensure API is accessible from your network
-4. Check browser console/device logs for detailed errors
-
-## Development
-
-### Adding a New Feature
-1. Create components in `src/components/`
-2. Update state in `src/store/photoshootStore.ts` if needed
-3. Add API methods in `src/services/api.ts` if needed
-4. Update the main screen component
-
-## License
-
-Same as parent getmycatalogueweb project
-
-## Support
-
-For issues related to the API, check the main web app repository.
-For React Native specific issues, refer to React Native documentation.
+- [React Native Website](https://reactnative.dev) - learn more about React Native.
+- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
+- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
+- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
+- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.

@@ -1,4 +1,4 @@
-package com.finalbooks.marketing
+package com.finalbooksmarketing
 
 import android.app.Application
 import com.facebook.react.PackageList
