@@ -1,11 +1,9 @@
 import UIKit
 import React
-import ReactCommon
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
   var window: UIWindow?
-  var bridge: RCTBridge?
 
   func application(
     _ application: UIApplication,
