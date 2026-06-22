@@ -6,18 +6,25 @@ interface GeneratedImage {
   url: string;
 }
 
+interface AppSettings {
+  aiProvider: string;
+  enhancePrompt: boolean;
+}
+
 interface PhotoshootState {
   images: GeneratedImage[];
   loading: boolean;
   error: string | null;
   options: any | null;
   optionsLoading: boolean;
+  appSettings: AppSettings;
 
   // Actions
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   setImages: (images: GeneratedImage[]) => void;
   clearImages: () => void;
+  setAppSettings: (settings: Partial<AppSettings>) => void;
 
   // Async actions
   fetchOptions: () => Promise<void>;
@@ -30,18 +37,38 @@ export const usePhotoshootStore = create<PhotoshootState>((set, get) => ({
   error: null,
   options: null,
   optionsLoading: false,
+  appSettings: {
+    aiProvider: 'openai',
+    enhancePrompt: false,
+  },
 
   setLoading: (loading) => set({ loading }),
   setError: (error) => set({ error }),
   setImages: (images) => set({ images }),
   clearImages: () => set({ images: [], error: null }),
+  setAppSettings: (settings) =>
+    set((state) => ({
+      appSettings: { ...state.appSettings, ...settings },
+    })),
 
   fetchOptions: async () => {
     set({ optionsLoading: true });
     try {
-      const options = await photoshootAPI.fetchOptions();
-      set({ options, optionsLoading: false });
+      const response = await photoshootAPI.getPhotoshootOptions();
+      console.log('Store fetchOptions response:', response);
+
+      // API returns {meta: {...}, options: {...}}
+      if (response.meta?.code === 200 && response.options) {
+        console.log('Setting options:', response.options);
+        set({ options: response.options, optionsLoading: false });
+      } else {
+        set({
+          error: response.meta?.message || 'Failed to load options',
+          optionsLoading: false,
+        });
+      }
     } catch (error: any) {
+      console.error('Store fetchOptions error:', error);
       set({
         error: error.message || 'Failed to load options',
         optionsLoading: false,

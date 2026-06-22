@@ -156,7 +156,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
-      <SafeAreaView style={styles.container} edges={['left', 'right']}>
+      <SafeAreaView style={styles.container}>
         {/* Header */}
         <AppHeader
           title="Settings"
@@ -261,7 +261,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
         {/* Details Modal */}
         <Modal visible={showDetailModal} animationType="slide" onRequestClose={() => setShowDetailModal(false)}>
-          <SafeAreaView style={styles.detailModalContainer} edges={['top', 'left', 'right']}>
+          <SafeAreaView style={styles.detailModalContainer}>
             <View style={styles.detailModalHeader}>
               <Text style={styles.detailModalTitle}>{selectedSettingDetails?.name}</Text>
               <TouchableOpacity onPress={() => setShowDetailModal(false)}>
@@ -282,14 +282,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               scrollEnabled={true}
             />
 
-            <SafeAreaView style={styles.detailFooter} edges={['bottom', 'left', 'right']}>
+            <View style={styles.detailFooter}>
               <TouchableOpacity
                 style={styles.detailCloseButton}
                 onPress={() => setShowDetailModal(false)}
               >
                 <Text style={styles.detailCloseButtonText}>Close</Text>
               </TouchableOpacity>
-            </SafeAreaView>
+            </View>
           </SafeAreaView>
         </Modal>
       </SafeAreaView>

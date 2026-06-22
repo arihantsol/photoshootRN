@@ -36,6 +36,10 @@ export const FormSelect: React.FC<FormSelectProps> = ({
     setModalVisible(false);
   };
 
+  const handleClear = () => {
+    onValueChange('');
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.label}>
@@ -50,7 +54,13 @@ export const FormSelect: React.FC<FormSelectProps> = ({
         <Text style={[styles.selectButtonText, !value && styles.placeholderText]}>
           {displayValue}
         </Text>
-        <Icon name="chevron-right" size={24} color="#007AFF" />
+        {value ? (
+          <TouchableOpacity onPress={handleClear} style={styles.clearIcon}>
+            <Icon name="close-circle" size={18} color="#007AFF" />
+          </TouchableOpacity>
+        ) : (
+          <Icon name="chevron-right" size={24} color="#007AFF" />
+        )}
       </TouchableOpacity>
 
       <OptionPickerModal
@@ -67,12 +77,12 @@ export const FormSelect: React.FC<FormSelectProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16,
+    marginBottom: 12,
   },
   label: {
     fontSize: 15,
     fontWeight: '600',
-    marginBottom: 8,
+    marginBottom: 6,
     color: '#000',
   },
   required: {
@@ -101,5 +111,8 @@ const styles = StyleSheet.create({
   disabled: {
     backgroundColor: '#F2F2F7',
     opacity: 0.6,
+  },
+  clearIcon: {
+    padding: 4,
   },
 });

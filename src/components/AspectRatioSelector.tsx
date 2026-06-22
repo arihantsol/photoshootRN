@@ -1,17 +1,20 @@
 import React from 'react';
 import { Controller } from 'react-hook-form';
 import { FormSelect } from './FormSelect';
-import PHOTOSHOOT_OPTIONS from '../constants/photoshootOptions';
 
 interface AspectRatioSelectorProps {
   control: any;
   errors: any;
+  options?: any[];
 }
 
 export const AspectRatioSelector: React.FC<AspectRatioSelectorProps> = ({
   control,
   errors,
+  options,
 }) => {
+  const defaultOptions = options || [];
+
   return (
     <Controller
       control={control}
@@ -21,7 +24,7 @@ export const AspectRatioSelector: React.FC<AspectRatioSelectorProps> = ({
           label="Aspect Ratio"
           value={value}
           onValueChange={onChange}
-          options={PHOTOSHOOT_OPTIONS.aspectRatio}
+          options={defaultOptions}
         />
       )}
     />

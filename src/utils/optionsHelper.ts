@@ -1,77 +1,35 @@
-import PHOTOSHOOT_OPTIONS from '../constants/photoshootOptions';
-
-export interface ProcessedOptions {
-  [key: string]: Array<{
-    label: string;
-    value: string;
-    help?: string;
-  }>;
-}
-
 /**
- * Process options from API response or use fallback from constants
- * @param apiOptions Options from API response
- * @returns Processed options with proper formatting
+ * Helper to convert API options format to component format
+ * API returns: { value, label, description? }
+ * Component expects: { value, label, help? }
  */
-export const processPhotoshootOptions = (
-  apiOptions?: any
-): ProcessedOptions => {
-  if (!apiOptions || !apiOptions.options) {
-    return PHOTOSHOOT_OPTIONS;
-  }
+export const convertApiOptions = (apiOptions: any[]): any[] => {
+  if (!Array.isArray(apiOptions)) return [];
 
-  const result: ProcessedOptions = {};
-
-  // Use API options if available, otherwise fall back to constants
-  Object.keys(PHOTOSHOOT_OPTIONS).forEach((key) => {
-    if (apiOptions.options?.[key] && Array.isArray(apiOptions.options[key])) {
-      result[key] = (apiOptions.options[key] as any[]).map((opt: any) => ({
-        label: opt.label,
-        value: opt.value,
-        help: opt.help || opt.description,
-      }));
-    } else {
-      // Use fallback from constants
-      result[key] = PHOTOSHOOT_OPTIONS[key as keyof typeof PHOTOSHOOT_OPTIONS];
-    }
-  });
-
-  return result;
+  return apiOptions.map(option => ({
+    value: option.value,
+    label: option.label,
+    help: option.description, // Convert description to help
+  }));
 };
 
 /**
- * Get options for a specific field
- * @param fieldName Name of the field
- * @param apiOptions Options from API response
- * @returns Array of options for the field
+ * Get options from API response by key
  */
-export const getFieldOptions = (
-  fieldName: string,
-  apiOptions?: any
-) => {
-  const processed = processPhotoshootOptions(apiOptions);
-  return processed[fieldName] || [];
+export const getOptionsByKey = (options: any, key: string): any[] => {
+  if (!options || !options[key]) return [];
+  return convertApiOptions(options[key]);
 };
 
 /**
- * Get label for an option value
- * @param fieldName Name of the field
- * @param value Value to find label for
- * @param apiOptions Options from API response
- * @returns Label of the option or value if not found
+ * Get single option from API response
  */
-export const getOptionLabel = (
-  fieldName: string,
-  value: string,
-  apiOptions?: any
-): string => {
-  const options = getFieldOptions(fieldName, apiOptions);
-  const option = options.find((opt) => opt.value === value);
-  return option?.label || value;
+export const getOptionByValue = (options: any[], value: string): any => {
+  return options.find(opt => opt.value === value);
 };
 
 export default {
-  processPhotoshootOptions,
-  getFieldOptions,
-  getOptionLabel,
+  convertApiOptions,
+  getOptionsByKey,
+  getOptionByValue,
 };

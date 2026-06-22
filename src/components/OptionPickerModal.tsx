@@ -7,9 +7,11 @@ import {
   TouchableOpacity,
   FlatList,
   TextInput,
-  SafeAreaView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { ModalHeader } from './ModalHeader';
+import { ModalFooter } from './ModalFooter';
 
 interface SelectOption {
   label: string;
@@ -54,6 +56,9 @@ export const OptionPickerModal: React.FC<OptionPickerModalProps> = ({
 
   const renderOption = ({ item }: { item: SelectOption }) => {
     const isSelected = item.value === selectedValue;
+    // Support both 'help' (component format) and 'description' (API format)
+    const helpText = item.help || (item as any).description;
+
     return (
       <TouchableOpacity
         style={[styles.optionItem, isSelected && styles.selectedOption]}
@@ -63,9 +68,9 @@ export const OptionPickerModal: React.FC<OptionPickerModalProps> = ({
           <Text style={[styles.optionLabel, isSelected && styles.selectedLabel]}>
             {item.label}
           </Text>
-          {item.help && (
+          {helpText && (
             <Text style={[styles.optionHelp, isSelected && styles.selectedHelp]}>
-              {item.help}
+              {helpText}
             </Text>
           )}
         </View>
@@ -77,14 +82,7 @@ export const OptionPickerModal: React.FC<OptionPickerModalProps> = ({
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
       <SafeAreaView style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity onPress={onClose} style={styles.headerButton}>
-            <Icon name="close" size={24} color="#007AFF" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>{title}</Text>
-          <View style={{ width: 40 }} />
-        </View>
+        <ModalHeader title={title} onClose={onClose} />
 
         {/* Search */}
         <View style={styles.searchContainer}>
@@ -115,6 +113,7 @@ export const OptionPickerModal: React.FC<OptionPickerModalProps> = ({
             renderItem={renderOption}
             keyExtractor={(item) => item.value}
             contentContainerStyle={styles.listContent}
+            scrollEnabled={true}
           />
         ) : (
           <View style={styles.emptyState}>
@@ -125,12 +124,7 @@ export const OptionPickerModal: React.FC<OptionPickerModalProps> = ({
           </View>
         )}
 
-        {/* Footer Info */}
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            {filteredOptions.length} option{filteredOptions.length !== 1 ? 's' : ''}
-          </Text>
-        </View>
+        <ModalFooter text={`${filteredOptions.length} option${filteredOptions.length !== 1 ? 's' : ''}`} />
       </SafeAreaView>
     </Modal>
   );
@@ -140,29 +134,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: 'white',
-    borderBottomWidth: 1,
-    borderBottomColor: '#C7C7CC',
-  },
-  headerButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: '#000',
-    flex: 1,
-    textAlign: 'center',
   },
   searchContainer: {
     backgroundColor: 'white',
@@ -255,18 +226,6 @@ const styles = StyleSheet.create({
   },
   emptyStateSubtext: {
     fontSize: 14,
-    color: '#999',
-    textAlign: 'center',
-  },
-  footer: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    backgroundColor: '#F2F2F7',
-    borderTopWidth: 1,
-    borderTopColor: '#C7C7CC',
-  },
-  footerText: {
-    fontSize: 12,
     color: '#999',
     textAlign: 'center',
   },

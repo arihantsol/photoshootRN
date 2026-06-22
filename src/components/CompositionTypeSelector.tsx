@@ -2,19 +2,22 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Controller } from 'react-hook-form';
 import { FormSelect } from './FormSelect';
-import PHOTOSHOOT_OPTIONS from '../constants/photoshootOptions';
 
 interface CompositionTypeSelectorProps {
   control: any;
   errors: any;
   hasMultipleImages: boolean;
+  options?: any[];
 }
 
 export const CompositionTypeSelector: React.FC<CompositionTypeSelectorProps> = ({
   control,
   errors,
   hasMultipleImages,
+  options,
 }) => {
+  const defaultOptions = options || [];
+
   if (!hasMultipleImages) {
     return (
       <View style={styles.container}>
@@ -35,7 +38,7 @@ export const CompositionTypeSelector: React.FC<CompositionTypeSelectorProps> = (
             label="Image Composition"
             value={value}
             onValueChange={onChange}
-            options={PHOTOSHOOT_OPTIONS.compositionType}
+            options={defaultOptions}
           />
         )}
       />

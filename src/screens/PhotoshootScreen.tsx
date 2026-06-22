@@ -15,15 +15,7 @@ import { validateFormData } from '../utils/validation';
 import { SettingsModal } from '../components/SettingsModal';
 import AppHeader from '../components/AppHeader';
 import { PhotoshootSettings } from '../utils/settingsStorage';
-import {
-  SOCIAL_MEDIA_PLATFORMS,
-  SOCIAL_MEDIA_CONTENT_TYPES,
-  SOCIAL_MEDIA_ASPECT_RATIOS,
-  SOCIAL_MEDIA_STYLES,
-  MODEL_TYPES,
-  BACKGROUND_STYLES,
-} from '../constants/socialMediaOptions';
-
+import { getOptionsByKey } from '../utils/optionsHelper';
 // Components
 import { ImagePickerComponent } from '../components/ImagePicker';
 import { FormSelect } from '../components/FormSelect';
@@ -37,9 +29,11 @@ import { ProductTypeSelector } from '../components/ProductTypeSelector';
 import { CompositionTypeSelector } from '../components/CompositionTypeSelector';
 import { AdvancedOptionsSelector } from '../components/AdvancedOptionsSelector';
 import { ResultsGrid } from '../components/ResultsGrid';
+import { ModelCard } from '../components/ModelCard';
 
 // Store
 import { usePhotoshootStore } from '../store/photoshootStore';
+import { SettingsScreen } from './SettingsScreen';
 
 interface FormData {
   productName: string;
@@ -55,7 +49,13 @@ interface FormData {
   modelImage?: string;
   customPrompt?: string;
   modelType?: string;
+  modelOrigin?: string;
+  modelBodyType?: string;
+  modelPose?: string;
+  modelExpression?: string;
   modelAge?: string;
+  modelPrompt?: string;
+  customModelImage?: string;
   watermarkText?: string;
   compositionType?: string;
   backgroundType?: string;
@@ -84,28 +84,54 @@ export const PhotoshootScreen: React.FC = () => {
   const { control, handleSubmit, formState: { errors }, watch, reset, setValue } = useForm<FormData>({
     defaultValues: {
       productName: '',
-      productType: 'fashion',
-      photoshootStyle: 'modern',
-      outputType: 'on-human',
+      productType: '',
+      photoshootStyle: '',
+      outputType: '',
       numberOfOptions: 1,
-      aiProvider: 'google',
-      aspectRatio: '1:1',
+      aiProvider: '',
+      aspectRatio: '',
       watermarkType: 'none',
       customPrompt: '',
       watermarkText: '',
       compositionType: '',
+      // Advanced options
+      backgroundType: '',
+      environmentStyle: '',
+      colorScheme: '',
+      moodTone: '',
+      lightingType: '',
+      lightDirection: '',
+      shotComposition: '',
+      cameraAngle: '',
+      depthOfField: '',
+      season: '',
+      occasion: '',
+      timeOfDay: '',
+      targetAudience: '',
+      marketSegment: '',
+      propDensity: '',
+      textureEmphasis: '',
+      materialFocus: '',
+      industryType: '',
+      brandPersonality: '',
     },
   });
 
-  const { generatePhotoshoot, images, loading, error, fetchOptions, options } = usePhotoshootStore();
+  const { generatePhotoshoot, images, loading, error, fetchOptions, options, appSettings } = usePhotoshootStore();
   const [mainMode, setMainMode] = useState<'product' | 'social'>('product');
   const [activeTab, setActiveTab] = useState<'product' | 'settings'>('product');
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+  const [appSettingsVisible, setAppSettingsVisible] = useState(false);
   const [currentSettings, setCurrentSettings] = useState<PhotoshootSettings | null>(null);
 
   useEffect(() => {
     fetchOptions();
-  }, [fetchOptions]);
+  }, []);
+
+  // Sync aiProvider from app settings to form
+  useEffect(() => {
+    setValue('aiProvider', appSettings.aiProvider);
+  }, [appSettings.aiProvider, setValue]);
 
   const handleGeneratePhotoshoot = async (data: FormData) => {
     // Validate form data
@@ -117,39 +143,63 @@ export const PhotoshootScreen: React.FC = () => {
 
     try {
       const payload: any = {
-        frontViewImage: data.frontViewImage,
-        productName: data.productName,
-        productType: data.productType,
-        photoshootStyle: data.photoshootStyle,
-        outputType: data.outputType,
+        type: mainMode,
         numberOfOptions: parseInt(String(data.numberOfOptions)) || 1,
-        aspectRatio: data.aspectRatio,
-        watermarkType: data.watermarkType,
+        aiProvider: appSettings.aiProvider,
+        enhancePrompt: appSettings.enhancePrompt,
       };
 
-      // Optional fields
-      if (data.backViewImage) payload.backViewImage = data.backViewImage;
-      if (data.modelImage) payload.modelImage = data.modelImage;
-      if (data.customPrompt) payload.customPrompt = data.customPrompt;
-      if (data.modelType) payload.modelType = data.modelType;
-      if (data.modelAge) payload.modelAge = parseInt(data.modelAge);
-      if (data.watermarkText) payload.watermarkText = data.watermarkText;
-      if (data.compositionType) payload.compositionType = data.compositionType;
+      if (mainMode === 'product') {
+        // Product mode specific fields
+        payload.frontViewImage = data.frontViewImage;
+        payload.productName = data.productName;
+        payload.productType = data.productType;
+        payload.photoshootStyle = data.photoshootStyle;
+        payload.outputType = data.outputType;
+        payload.aspectRatio = data.aspectRatio;
+        payload.watermarkType = data.watermarkType;
 
-      // Advanced options
-      const advancedFields = [
-        'backgroundType', 'environmentStyle', 'colorScheme', 'moodTone',
-        'lightingType', 'lightDirection', 'shotComposition', 'cameraAngle',
-        'depthOfField', 'season', 'occasion', 'timeOfDay',
-        'targetAudience', 'marketSegment', 'propDensity', 'textureEmphasis',
-        'materialFocus', 'industryType', 'brandPersonality',
-      ];
+        // Optional product fields
+        if (data.backViewImage) payload.backViewImage = data.backViewImage;
+        if (data.modelImage) payload.modelImage = data.modelImage;
+        if (data.customPrompt) payload.customPrompt = data.customPrompt;
+        if (data.modelType) payload.modelType = data.modelType;
+        if (data.customModelImage) payload.customModelImage = data.customModelImage;
+        if (data.modelOrigin) payload.modelOrigin = data.modelOrigin;
+        if (data.modelBodyType) payload.modelBodyType = data.modelBodyType;
+        if (data.modelPose) payload.modelPose = data.modelPose;
+        if (data.modelExpression) payload.modelExpression = data.modelExpression;
+        if (data.modelAge) payload.modelAge = parseInt(data.modelAge);
+        if (data.modelPrompt) payload.modelPrompt = data.modelPrompt;
+        if (data.watermarkText) payload.watermarkText = data.watermarkText;
+        if (data.compositionType) payload.compositionType = data.compositionType;
 
-      advancedFields.forEach((field) => {
-        if (data[field]) {
-          payload[field] = data[field];
-        }
-      });
+        // Advanced options
+        const advancedFields = [
+          'backgroundType', 'environmentStyle', 'colorScheme', 'moodTone',
+          'lightingType', 'lightDirection', 'shotComposition', 'cameraAngle',
+          'depthOfField', 'season', 'occasion', 'timeOfDay',
+          'targetAudience', 'marketSegment', 'propDensity', 'textureEmphasis',
+          'materialFocus', 'industryType', 'brandPersonality',
+        ];
+
+        advancedFields.forEach((field) => {
+          if (data[field]) {
+            payload[field] = data[field];
+          }
+        });
+      } else if (mainMode === 'social') {
+        // Social media mode specific fields
+        if (data.socialPlatform) payload.socialPlatform = data.socialPlatform;
+        if (data.socialContentType) payload.socialContentType = data.socialContentType;
+        if (data.aspectRatio) payload.aspectRatio = data.aspectRatio;
+        if (data.backgroundStyle) payload.backgroundStyle = data.backgroundStyle;
+        if (data.modelTypeForSocial) payload.modelType = data.modelTypeForSocial;
+        if (data.customModelImage) payload.customModelImage = data.customModelImage;
+        if (data.companyLogo) payload.companyLogo = data.companyLogo;
+        if (data.socialStyle) payload.socialStyle = data.socialStyle;
+        if (data.customPromptSocial) payload.customPrompt = data.customPromptSocial;
+      }
 
       // Call API via store
       await generatePhotoshoot(payload);
@@ -179,14 +229,19 @@ export const PhotoshootScreen: React.FC = () => {
       <AppHeader
         title="Image Generator"
         rightIcon="cog"
-        onRightPress={() => setSettingsModalVisible(true)}
+        onRightPress={() => setAppSettingsVisible(true)}
       />
 
       {/* Main Mode Tabs - Product vs Social */}
       <View style={styles.mainModeContainer}>
         <TouchableOpacity
           style={[styles.modeTab, mainMode === 'product' && styles.activeModeTab]}
-          onPress={() => setMainMode('product')}
+          onPress={() => {
+            if (mainMode !== 'product') {
+              reset();
+              setMainMode('product');
+            }
+          }}
         >
           <Text style={[styles.modeTabText, mainMode === 'product' && styles.activeModeTabText]}>
             Product Images
@@ -194,7 +249,12 @@ export const PhotoshootScreen: React.FC = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.modeTab, mainMode === 'social' && styles.activeModeTab]}
-          onPress={() => setMainMode('social')}
+          onPress={() => {
+            if (mainMode !== 'social') {
+              reset();
+              setMainMode('social');
+            }
+          }}
         >
           <Text style={[styles.modeTabText, mainMode === 'social' && styles.activeModeTabText]}>
             Social Media
@@ -283,6 +343,7 @@ export const PhotoshootScreen: React.FC = () => {
             <ProductTypeSelector
               control={control}
               errors={errors}
+              options={options ? getOptionsByKey(options, 'productType') : undefined}
             />
 
             <Controller
@@ -309,24 +370,24 @@ export const PhotoshootScreen: React.FC = () => {
               )}
             />
 
-            <Controller
-              control={control}
-              name="modelImage"
-              render={({ field: { value, onChange } }) => (
-                <ImagePickerComponent
-                  label="Model Image (Optional)"
-                  onImageSelected={onChange}
-                  disabled={loading}
-                />
-              )}
-            />
           </View>
+        )}
+
+        {/* Model Card - Shared for both Product and Social */}
+        {mainMode === 'product' && activeTab === 'product' && (
+          <ModelCard
+            control={control}
+            watch={watch}
+            setValue={setValue}
+            options={options}
+            loading={loading}
+          />
         )}
 
         {/* SETTINGS TAB */}
         {/* Social Media Mode */}
         {mainMode === 'social' && activeTab === 'product' && (
-          <ScrollView style={styles.content}>
+          <View>
             {/* Image Setup Section */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Image Setup</Text>
@@ -336,7 +397,7 @@ export const PhotoshootScreen: React.FC = () => {
                 label="Platform"
                 value={watch('socialPlatform') || ''}
                 onValueChange={(value) => setValue('socialPlatform', value)}
-                options={SOCIAL_MEDIA_PLATFORMS}
+                options={getOptionsByKey(options, 'socialMediaPlatform')}
                 required
               />
 
@@ -345,7 +406,7 @@ export const PhotoshootScreen: React.FC = () => {
                 label="Content Type"
                 value={watch('socialContentType') || ''}
                 onValueChange={(value) => setValue('socialContentType', value)}
-                options={SOCIAL_MEDIA_CONTENT_TYPES}
+                options={getOptionsByKey(options, 'socialMediaContentType')}
                 required
               />
 
@@ -354,7 +415,7 @@ export const PhotoshootScreen: React.FC = () => {
                 label="Aspect Ratio"
                 value={watch('aspectRatio') || '1:1'}
                 onValueChange={(value) => setValue('aspectRatio', value)}
-                options={SOCIAL_MEDIA_ASPECT_RATIOS[watch('socialPlatform') as keyof typeof SOCIAL_MEDIA_ASPECT_RATIOS] || SOCIAL_MEDIA_ASPECT_RATIOS.instagram}
+                options={getOptionsByKey(options, 'aspectRatio')}
                 required
               />
 
@@ -363,38 +424,13 @@ export const PhotoshootScreen: React.FC = () => {
                 label="Background Style"
                 value={watch('backgroundStyle') || 'solid'}
                 onValueChange={(value) => setValue('backgroundStyle', value)}
-                options={BACKGROUND_STYLES}
+                options={getOptionsByKey(options, 'backgroundStyle')}
               />
             </View>
 
-            {/* Model & Logo Section */}
+            {/* Logo Upload */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Model & Logo</Text>
-
-              {/* Model Type */}
-              <FormSelect
-                label="Model Type"
-                value={watch('modelTypeForSocial') || 'product_only'}
-                onValueChange={(value) => setValue('modelTypeForSocial', value)}
-                options={MODEL_TYPES}
-              />
-
-              {/* Custom Model Image Upload */}
-              {watch('modelTypeForSocial') === 'custom' && (
-                <Controller
-                  control={control}
-                  name="customModelImage"
-                  render={({ field: { value, onChange } }) => (
-                    <ImagePickerComponent
-                      label="Model Image *"
-                      onImageSelected={onChange}
-                      disabled={loading}
-                    />
-                  )}
-                />
-              )}
-
-              {/* Logo Upload */}
+              <Text style={styles.sectionTitle}>Company Logo</Text>
               <Controller
                 control={control}
                 name="companyLogo"
@@ -417,10 +453,21 @@ export const PhotoshootScreen: React.FC = () => {
                 label="Visual Style"
                 value={watch('socialStyle') || 'modern'}
                 onValueChange={(value) => setValue('socialStyle', value)}
-                options={SOCIAL_MEDIA_STYLES}
+                options={getOptionsByKey(options, 'socialMediaStyle')}
               />
             </View>
-          </ScrollView>
+          </View>
+        )}
+
+        {/* Model Card - Shared for Social */}
+        {mainMode === 'social' && activeTab === 'product' && (
+          <ModelCard
+            control={control}
+            watch={watch}
+            setValue={setValue}
+            options={options}
+            loading={loading}
+          />
         )}
 
         {/* SOCIAL MEDIA SETTINGS TAB */}
@@ -471,84 +518,83 @@ export const PhotoshootScreen: React.FC = () => {
         )}
 
         {mainMode === 'product' && activeTab === 'settings' && (
-          <ScrollView style={styles.content}>
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Image Settings</Text>
-
-              {/* Style */}
-              <View style={styles.subsection}>
-                <Text style={styles.subsectionTitle}>Style</Text>
-                <StyleSelector
-                  control={control}
-                  errors={errors}
-                />
-              </View>
-
-              {/* Display Format */}
-              <View style={styles.subsection}>
-                <Text style={styles.subsectionTitle}>Display Format</Text>
-                <OutputTypeSelector
-                  control={control}
-                  errors={errors}
-                />
-              </View>
-
-              {/* Image Dimensions */}
-              <View style={styles.subsection}>
-                <Text style={styles.subsectionTitle}>Image Dimensions</Text>
-                <AspectRatioSelector
-                  control={control}
-                  errors={errors}
-                />
-              </View>
-
-              {/* Watermark */}
-              <View style={styles.subsection}>
-                <Text style={styles.subsectionTitle}>Watermark</Text>
-                <WatermarkSelector
-                  control={control}
-                  watch={watch}
-                  errors={errors}
-                />
-              </View>
-
-              {/* Image Composition */}
-              {watch('backViewImage') && (
-                <View style={styles.subsection}>
-                  <Text style={styles.subsectionTitle}>Image Composition</Text>
-                  <CompositionTypeSelector
-                    control={control}
-                    errors={errors}
-                    hasMultipleImages={!!watch('backViewImage')}
-                  />
-                </View>
-              )}
+          <View>
+            {/* Style Card */}
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>Style</Text>
+              <StyleSelector
+                control={control}
+                errors={errors}
+                options={options ? getOptionsByKey(options, 'photoshootStyle') : undefined}
+              />
             </View>
 
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Generation Settings</Text>
-
-              {/* Number of Variations */}
-              <View style={styles.subsection}>
-                <Text style={styles.subsectionTitle}>Number of Variations</Text>
-                <OptionsSlider control={control} watch={watch} setValue={setValue} />
-              </View>
-
-              {/* Custom Prompt */}
-              <View style={styles.subsection}>
-                <Text style={styles.subsectionTitle}>Custom Instructions</Text>
-                <CustomPromptInput control={control} errors={errors} />
-              </View>
+            {/* Display Format Card */}
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>Display Format</Text>
+              <OutputTypeSelector
+                control={control}
+                errors={errors}
+                options={options ? getOptionsByKey(options, 'outputType') : undefined}
+              />
             </View>
 
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Advanced Options</Text>
+            {/* Image Dimensions Card */}
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>Image Dimensions</Text>
+              <AspectRatioSelector
+                control={control}
+                errors={errors}
+                options={options ? getOptionsByKey(options, 'aspectRatio') : undefined}
+              />
+            </View>
+
+            {/* Watermark Card */}
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>Watermark</Text>
+              <WatermarkSelector
+                control={control}
+                watch={watch}
+                errors={errors}
+                options={options ? getOptionsByKey(options, 'watermarkType') : undefined}
+              />
+            </View>
+
+            {/* Image Composition Card */}
+            {watch('backViewImage') && (
+              <View style={styles.card}>
+                <Text style={styles.cardTitle}>Image Composition</Text>
+                <CompositionTypeSelector
+                  control={control}
+                  errors={errors}
+                  hasMultipleImages={!!watch('backViewImage')}
+                  options={options ? getOptionsByKey(options, 'shotComposition') : undefined}
+                />
+              </View>
+            )}
+
+            {/* Number of Variations Card */}
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>Number of Variations</Text>
+              <OptionsSlider control={control} watch={watch} setValue={setValue} />
+            </View>
+
+            {/* Custom Instructions Card */}
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>Custom Instructions</Text>
+              <CustomPromptInput control={control} errors={errors} />
+            </View>
+
+            {/* Advanced Options Card */}
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>Advanced Options</Text>
               <AdvancedOptionsSelector
                 control={control}
                 errors={errors}
+                options={options}
               />
             </View>
-          </ScrollView>
+          </View>
         )}
 
         {/* Results Section */}
@@ -611,6 +657,23 @@ export const PhotoshootScreen: React.FC = () => {
         }}
         currentSettings={currentSettings}
       />
+
+      {/* App Settings Screen Modal */}
+      {appSettingsVisible && (
+        <SafeAreaView style={styles.settingsScreenContainer}>
+          <SettingsScreen
+            onClose={() => setAppSettingsVisible(false)}
+            onPresetSelected={(preset) => {
+              // Apply all preset settings to the form
+              Object.entries(preset.settings).forEach(([key, value]) => {
+                if (value !== undefined && value !== null) {
+                  setValue(key as any, value);
+                }
+              });
+            }}
+          />
+        </SafeAreaView>
+      )}
     </SafeAreaView>
   );
 };
@@ -619,6 +682,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F2F2F7',
+  },
+  settingsScreenContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#F2F2F7',
+    zIndex: 100,
   },
   mainModeContainer: {
     flexDirection: 'row',
@@ -676,6 +748,19 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 12,
+  },
+  card: {
+    backgroundColor: 'white',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 10,
+    marginHorizontal: 0,
+  },
+  cardTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    marginBottom: 10,
+    color: '#000',
   },
   section: {
     backgroundColor: 'white',

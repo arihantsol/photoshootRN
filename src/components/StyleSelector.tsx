@@ -2,17 +2,20 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Controller } from 'react-hook-form';
 import { FormSelect } from './FormSelect';
-import PHOTOSHOOT_OPTIONS from '../constants/photoshootOptions';
 
 interface StyleSelectorProps {
   control: any;
   errors: any;
+  options?: any[];
 }
 
 export const StyleSelector: React.FC<StyleSelectorProps> = ({
   control,
   errors,
+  options,
 }) => {
+  const defaultOptions = options || [];
+
   return (
     <Controller
       control={control}
@@ -22,7 +25,7 @@ export const StyleSelector: React.FC<StyleSelectorProps> = ({
           label="Photoshoot Style"
           value={value}
           onValueChange={onChange}
-          options={PHOTOSHOOT_OPTIONS.photoshootStyle}
+          options={defaultOptions}
         />
       )}
     />

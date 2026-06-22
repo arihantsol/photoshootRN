@@ -9,7 +9,6 @@ export interface PhotoshootSettings {
     photoshootStyle: string;
     outputType: string;
     numberOfOptions: number;
-    aiProvider: string;
     aspectRatio: string;
     watermarkType: string;
     // Advanced options
