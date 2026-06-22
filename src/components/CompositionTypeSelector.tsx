@@ -2,13 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Controller } from 'react-hook-form';
 import { FormSelect } from './FormSelect';
-
-const COMPOSITION_TYPES = [
-  { label: 'Side by Side', value: 'side-by-side', help: 'Images placed side by side' },
-  { label: 'Stacked', value: 'stacked', help: 'Images stacked vertically' },
-  { label: 'Grid', value: 'grid', help: 'Images in grid layout' },
-  { label: 'Collage', value: 'collage', help: 'Creative collage layout' },
-];
+import PHOTOSHOOT_OPTIONS from '../constants/photoshootOptions';
 
 interface CompositionTypeSelectorProps {
   control: any;
@@ -41,7 +35,7 @@ export const CompositionTypeSelector: React.FC<CompositionTypeSelectorProps> = (
             label="Image Composition"
             value={value}
             onValueChange={onChange}
-            options={COMPOSITION_TYPES}
+            options={PHOTOSHOOT_OPTIONS.compositionType}
           />
         )}
       />

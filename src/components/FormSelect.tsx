@@ -1,6 +1,7 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { OptionPickerModal } from './OptionPickerModal';
 
 interface SelectOption {
   label: string;
@@ -25,29 +26,41 @@ export const FormSelect: React.FC<FormSelectProps> = ({
   required = false,
   disabled = false,
 }) => {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const selectedOption = options.find((opt) => opt.value === value);
+  const displayValue = selectedOption?.label || `Select ${label}`;
+
+  const handleSelect = (selectedValue: string) => {
+    onValueChange(selectedValue);
+    setModalVisible(false);
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.label}>
         {label}
         {required && <Text style={styles.required}> *</Text>}
       </Text>
-      <View style={[styles.pickerContainer, disabled && styles.disabled]}>
-        <Picker
-          selectedValue={value}
-          onValueChange={onValueChange}
-          enabled={!disabled}
-          style={styles.picker}
-        >
-          <Picker.Item label={`Select ${label}`} value="" />
-          {options.map((option) => (
-            <Picker.Item
-              key={option.value}
-              label={option.label}
-              value={option.value}
-            />
-          ))}
-        </Picker>
-      </View>
+      <TouchableOpacity
+        style={[styles.selectButton, disabled && styles.disabled]}
+        onPress={() => !disabled && setModalVisible(true)}
+        disabled={disabled}
+      >
+        <Text style={[styles.selectButtonText, !value && styles.placeholderText]}>
+          {displayValue}
+        </Text>
+        <Icon name="chevron-right" size={24} color="#007AFF" />
+      </TouchableOpacity>
+
+      <OptionPickerModal
+        visible={modalVisible}
+        title={label}
+        options={options}
+        selectedValue={value}
+        onSelect={handleSelect}
+        onClose={() => setModalVisible(false)}
+      />
     </View>
   );
 };
@@ -57,26 +70,36 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   label: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
     marginBottom: 8,
-    color: '#333',
+    color: '#000',
   },
   required: {
     color: '#FF3B30',
   },
-  pickerContainer: {
+  selectButton: {
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: '#C7C7CC',
     borderRadius: 8,
     backgroundColor: '#FFFFFF',
-    overflow: 'hidden',
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  picker: {
-    height: 50,
+  selectButtonText: {
+    fontSize: 15,
+    color: '#000',
+    flex: 1,
+    fontWeight: '400',
+  },
+  placeholderText: {
+    color: '#999',
   },
   disabled: {
-    backgroundColor: '#F0F0F0',
+    backgroundColor: '#F2F2F7',
     opacity: 0.6,
   },
 });

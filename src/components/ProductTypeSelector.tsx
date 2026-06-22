@@ -2,13 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Controller } from 'react-hook-form';
 import { FormSelect } from './FormSelect';
-
-const PRODUCT_TYPES = [
-  { label: 'Fashion', value: 'fashion', help: 'Clothing and apparel' },
-  { label: 'Jewelry', value: 'jewelry', help: 'Accessories and jewelry' },
-  { label: 'Electronics', value: 'electronics', help: 'Tech products' },
-  { label: 'Home & Decor', value: 'home', help: 'Home goods and decor' },
-];
+import PHOTOSHOOT_OPTIONS from '../constants/photoshootOptions';
 
 interface ProductTypeSelectorProps {
   control: any;
@@ -29,7 +23,7 @@ export const ProductTypeSelector: React.FC<ProductTypeSelectorProps> = ({
             label="Product Type"
             value={value}
             onValueChange={onChange}
-            options={PRODUCT_TYPES}
+            options={PHOTOSHOOT_OPTIONS.productType}
           />
         )}
       />

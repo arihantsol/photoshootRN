@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { photoshootAPI, PhotoshootResponse, PhotoshootOptions } from '../services/api';
+import photoshootAPI from '../services/photoshootAPI';
 
 interface GeneratedImage {
   id: string;
@@ -10,7 +10,7 @@ interface PhotoshootState {
   images: GeneratedImage[];
   loading: boolean;
   error: string | null;
-  options: PhotoshootOptions | null;
+  options: any | null;
   optionsLoading: boolean;
 
   // Actions
@@ -54,20 +54,20 @@ export const usePhotoshootStore = create<PhotoshootState>((set, get) => ({
     try {
       const response = await photoshootAPI.generatePhotoshoot(payload);
 
-      if (response.meta.code === 200 && response.images) {
-        const images = response.images.map((url, index) => ({
+      if (response.success && response.data?.images) {
+        const images = response.data.images.map((url, index) => ({
           id: `ps-${Date.now()}-${index}`,
           url,
         }));
         set({ images, loading: false });
         return images;
       } else {
-        const errorMsg = response.meta.message || 'Generation failed';
+        const errorMsg = response.message || 'Generation failed';
         set({ error: errorMsg, loading: false });
         return null;
       }
     } catch (error: any) {
-      const errorMsg = error.response?.data?.meta?.message || error.message || 'Failed to generate photoshoot';
+      const errorMsg = error.message || 'Failed to generate photoshoot';
       set({ error: errorMsg, loading: false });
       return null;
     }

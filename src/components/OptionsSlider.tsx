@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Slider } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Controller } from 'react-hook-form';
 
 interface OptionsSliderProps {
@@ -15,6 +15,12 @@ export const OptionsSlider: React.FC<OptionsSliderProps> = ({
 }) => {
   const numberOfOptions = watch('numberOfOptions');
 
+  const handleChange = (value: number) => {
+    setValue('numberOfOptions', value);
+  };
+
+  const options = [1, 2, 3, 4, 5];
+
   return (
     <Controller
       control={control}
@@ -25,20 +31,33 @@ export const OptionsSlider: React.FC<OptionsSliderProps> = ({
             <Text style={styles.label}>Number of Images to Generate</Text>
             <Text style={styles.value}>{value}</Text>
           </View>
-          <Slider
-            style={styles.slider}
-            minimumValue={1}
-            maximumValue={5}
-            step={1}
-            value={value}
-            onValueChange={(val) => setValue('numberOfOptions', val)}
-            minimumTrackTintColor="#007AFF"
-            maximumTrackTintColor="#E0E0E0"
-            thumbTintColor="#007AFF"
-          />
+
+          {/* Custom slider using buttons */}
+          <View style={styles.sliderContainer}>
+            {options.map((num) => (
+              <TouchableOpacity
+                key={num}
+                style={[
+                  styles.sliderButton,
+                  value === num && styles.sliderButtonActive,
+                ]}
+                onPress={() => handleChange(num)}
+              >
+                <Text
+                  style={[
+                    styles.sliderButtonText,
+                    value === num && styles.sliderButtonTextActive,
+                  ]}
+                >
+                  {num}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
           <View style={styles.rangeLabels}>
-            <Text style={styles.rangeLabel}>1</Text>
-            <Text style={styles.rangeLabel}>5</Text>
+            <Text style={styles.rangeLabel}>1 (Fast)</Text>
+            <Text style={styles.rangeLabel}>5 (Comprehensive)</Text>
           </View>
         </View>
       )}
@@ -54,31 +73,57 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
   },
   label: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
-    color: '#333',
+    color: '#000',
   },
   value: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '600',
     color: '#007AFF',
     minWidth: 30,
     textAlign: 'right',
   },
-  slider: {
-    width: '100%',
-    height: 40,
+  sliderContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+    gap: 8,
+  },
+  sliderButton: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#C7C7CC',
+    backgroundColor: '#F2F2F7',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sliderButtonActive: {
+    backgroundColor: '#007AFF',
+    borderColor: '#007AFF',
+  },
+  sliderButtonText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#666',
+  },
+  sliderButtonTextActive: {
+    color: 'white',
   },
   rangeLabels: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 10,
+    paddingHorizontal: 0,
+    marginTop: 6,
   },
   rangeLabel: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#999',
+    fontWeight: '400',
   },
 });

@@ -45,6 +45,8 @@ typings/
 .env
 .env.local
 .env.*.local
+.env.development
+.env.production
 
 # Mac files
 .DS_Store

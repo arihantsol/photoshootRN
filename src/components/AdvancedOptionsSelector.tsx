@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Controller } from 'react-hook-form';
 import { FormSelect } from './FormSelect';
+import PHOTOSHOOT_OPTIONS from '../constants/photoshootOptions';
 
 interface AdvancedOptionsSelectorProps {
   control: any;
   errors: any;
-  photoshootOptions: any;
 }
 
 interface SectionConfig {
@@ -19,6 +19,23 @@ interface SectionConfig {
 }
 
 const sections: SectionConfig[] = [
+  {
+    title: 'Model',
+    fields: [
+      { name: 'modelType', label: 'Model Type', optionKey: 'modelType' },
+      { name: 'modelOrigin', label: 'Model Origin', optionKey: 'modelOrigin' },
+      { name: 'modelBodyType', label: 'Model Body Type', optionKey: 'modelBodyType' },
+      { name: 'modelPose', label: 'Model Pose', optionKey: 'modelPose' },
+      { name: 'modelExpression', label: 'Model Expression', optionKey: 'modelExpression' },
+    ],
+  },
+  {
+    title: 'Product View',
+    fields: [
+      { name: 'productCount', label: 'Product Count', optionKey: 'productCount' },
+      { name: 'productAngle', label: 'Product Angle', optionKey: 'productAngle' },
+    ],
+  },
   {
     title: 'Environment & Background',
     fields: [
@@ -83,7 +100,6 @@ const sections: SectionConfig[] = [
 export const AdvancedOptionsSelector: React.FC<AdvancedOptionsSelectorProps> = ({
   control,
   errors,
-  photoshootOptions,
 }) => {
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
 
@@ -96,7 +112,7 @@ export const AdvancedOptionsSelector: React.FC<AdvancedOptionsSelectorProps> = (
   };
 
   const getOptions = (optionKey: string) => {
-    return photoshootOptions?.options?.[optionKey] || [];
+    return PHOTOSHOOT_OPTIONS[optionKey as keyof typeof PHOTOSHOOT_OPTIONS] || [];
   };
 
   return (
@@ -110,8 +126,9 @@ export const AdvancedOptionsSelector: React.FC<AdvancedOptionsSelectorProps> = (
               onPress={() => toggleSection(section.title)}
             >
               <Text style={styles.sectionTitle}>
-                {isExpanded ? '▼' : '▶'} {section.title}
+                {isExpanded ? '▼' : '▶'}
               </Text>
+              <Text style={styles.sectionTitleText}>{section.title}</Text>
             </TouchableOpacity>
 
             {isExpanded && (
@@ -142,31 +159,44 @@ export const AdvancedOptionsSelector: React.FC<AdvancedOptionsSelectorProps> = (
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 8,
+    marginTop: 0,
   },
   section: {
-    marginBottom: 12,
+    marginBottom: 6,
     borderRadius: 6,
-    backgroundColor: '#F9F9F9',
+    backgroundColor: 'white',
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: '#E8E8E8',
   },
   sectionHeader: {
     paddingHorizontal: 12,
-    paddingVertical: 12,
-    backgroundColor: '#FAFAFA',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    paddingVertical: 10,
+    backgroundColor: 'white',
+    borderBottomWidth: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
     color: '#333',
+    width: 12,
+    textAlign: 'center',
+  },
+  sectionTitleText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#000',
+    flex: 1,
   },
   sectionContent: {
     paddingHorizontal: 12,
-    paddingVertical: 12,
-    gap: 12,
+    paddingVertical: 8,
+    paddingTop: 10,
+    gap: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#E8E8E8',
   },
 });

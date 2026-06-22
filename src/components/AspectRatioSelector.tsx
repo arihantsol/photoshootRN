@@ -1,14 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
 import { Controller } from 'react-hook-form';
 import { FormSelect } from './FormSelect';
-
-const ASPECT_RATIOS = [
-  { label: '1:1 (Square)', value: '1:1', help: 'Square format' },
-  { label: '16:9 (Wide)', value: '16:9', help: 'Wide landscape' },
-  { label: '9:16 (Portrait)', value: '9:16', help: 'Tall portrait' },
-  { label: '4:3 (Standard)', value: '4:3', help: 'Standard format' },
-];
+import PHOTOSHOOT_OPTIONS from '../constants/photoshootOptions';
 
 interface AspectRatioSelectorProps {
   control: any;
@@ -28,7 +21,7 @@ export const AspectRatioSelector: React.FC<AspectRatioSelectorProps> = ({
           label="Aspect Ratio"
           value={value}
           onValueChange={onChange}
-          options={ASPECT_RATIOS}
+          options={PHOTOSHOOT_OPTIONS.aspectRatio}
         />
       )}
     />

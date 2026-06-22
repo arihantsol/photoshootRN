@@ -2,11 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Controller } from 'react-hook-form';
 import { FormSelect } from './FormSelect';
-
-const AI_PROVIDERS = [
-  { label: 'Google', value: 'google', help: 'Google AI' },
-  { label: 'OpenAI', value: 'openai', help: 'OpenAI GPT' },
-];
+import PHOTOSHOOT_OPTIONS from '../constants/photoshootOptions';
 
 interface AIProviderSelectorProps {
   control: any;
@@ -27,7 +23,7 @@ export const AIProviderSelector: React.FC<AIProviderSelectorProps> = ({
             label="AI Provider"
             value={value}
             onValueChange={onChange}
-            options={AI_PROVIDERS}
+            options={PHOTOSHOOT_OPTIONS.aiProvider}
           />
         )}
       />

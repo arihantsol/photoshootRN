@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/macmini007/Documents/getmycatalogueweb/src/Components/PhotoshootGenerator/**)",
+      "Bash(grep -r \"generate\\\\|ai\\\\|photoshoot\" /Users/macmini007/Documents/getmycatalogueweb/src --include=\"*.ts\" --include=\"*.tsx\" --include=\"*.js\" -i 2>/dev/null | grep -v node_modules | head -30)",
+      "Read(//Users/macmini007/Documents/getmycatalogueweb/src/**)",
+      "Bash(grep -r \"generate\\\\|photoshoot\\\\|image.*create\" /Users/macmini007/Documents/getmycataloguenext/src --include=\"*.ts\" --include=\"*.tsx\" -i 2>/dev/null | grep -v node_modules | head -20)",
+      "Read(//Users/macmini007/Documents/getmycataloguenext/**)",
+      "Bash(find /Users/macmini007/Documents/getmycatalogueweb -name \"config*\" -o -name \".env*\" -o -name \"api*\" 2>/dev/null | head -20)",
+      "Read(//Users/macmini007/Documents/getmycatalogueweb/**)"
+    ]
+  }
+}

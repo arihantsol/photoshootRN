@@ -13,69 +13,69 @@ export const CustomPromptInput: React.FC<CustomPromptInputProps> = ({
 }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Additional Instructions</Text>
       <Controller
         control={control}
         name="customPrompt"
         render={({ field: { value, onChange } }) => (
           <View>
+            <Text style={styles.label}>Additional Instructions (Max 500 characters)</Text>
             <TextInput
               style={[styles.textInput, errors.customPrompt && styles.inputError]}
-              placeholder="Add any special instructions for the generation..."
+              placeholder="Add any custom instructions for image generation..."
+              placeholderTextColor="#999"
               value={value}
               onChangeText={onChange}
               multiline
               numberOfLines={4}
-              textAlignVertical="top"
-              placeholderTextColor="#999"
             />
+            <Text style={styles.charCount}>
+              {(value?.length || 0)}/500
+            </Text>
             {errors.customPrompt && (
               <Text style={styles.errorText}>{errors.customPrompt.message}</Text>
             )}
           </View>
         )}
       />
-      <Text style={styles.help}>
-        E.g., "Make the product look premium, add luxury background, focus on
-        details"
-      </Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16,
+    marginBottom: 12,
   },
-  title: {
-    fontSize: 16,
+  label: {
+    fontSize: 13,
     fontWeight: '600',
-    marginBottom: 8,
-    color: '#333',
+    marginBottom: 6,
+    color: '#000',
   },
   textInput: {
     borderWidth: 1,
-    borderColor: '#E0E0E0',
-    borderRadius: 6,
+    borderColor: '#C7C7CC',
+    borderRadius: 8,
     paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 14,
+    paddingVertical: 12,
+    fontSize: 15,
     color: '#333',
-    backgroundColor: '#FAFAFA',
+    backgroundColor: '#FFFFFF',
+    height: 100,
+    textAlignVertical: 'top',
   },
   inputError: {
     borderColor: '#FF3B30',
     backgroundColor: '#FFF5F5',
   },
-  errorText: {
-    color: '#FF3B30',
-    fontSize: 12,
-    marginTop: 4,
-  },
-  help: {
+  charCount: {
     fontSize: 12,
     color: '#999',
-    marginTop: 8,
-    fontStyle: 'italic',
+    marginTop: 4,
+    textAlign: 'right',
+  },
+  errorText: {
+    color: '#FF3B30',
+    fontSize: 11,
+    marginTop: 3,
   },
 });

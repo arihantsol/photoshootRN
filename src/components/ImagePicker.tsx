@@ -7,10 +7,9 @@ import {
   Alert,
   StyleSheet,
   ActivityIndicator,
-  Platform,
 } from 'react-native';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
-import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface ImagePickerProps {
   onImageSelected: (base64: string) => void;
@@ -25,32 +24,6 @@ export const ImagePickerComponent: React.FC<ImagePickerProps> = ({
 }) => {
   const [image, setImage] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
-
-  const requestGalleryPermission = async () => {
-    const permission = Platform.OS === 'ios'
-      ? PERMISSIONS.IOS.PHOTO_LIBRARY
-      : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE;
-
-    const result = await check(permission);
-    if (result === RESULTS.DENIED) {
-      const requestResult = await request(permission);
-      return requestResult === RESULTS.GRANTED;
-    }
-    return result === RESULTS.GRANTED;
-  };
-
-  const requestCameraPermission = async () => {
-    const permission = Platform.OS === 'ios'
-      ? PERMISSIONS.IOS.CAMERA
-      : PERMISSIONS.ANDROID.CAMERA;
-
-    const result = await check(permission);
-    if (result === RESULTS.DENIED) {
-      const requestResult = await request(permission);
-      return requestResult === RESULTS.GRANTED;
-    }
-    return result === RESULTS.GRANTED;
-  };
 
   const convertToBase64 = async (uri: string): Promise<string> => {
     const response = await fetch(uri);
@@ -70,12 +43,6 @@ export const ImagePickerComponent: React.FC<ImagePickerProps> = ({
   };
 
   const pickImage = async () => {
-    const hasPermission = await requestGalleryPermission();
-    if (!hasPermission) {
-      Alert.alert('Permission needed', 'Gallery permissions are required to select images');
-      return;
-    }
-
     setLoading(true);
     try {
       const result = await launchImageLibrary({
@@ -101,12 +68,6 @@ export const ImagePickerComponent: React.FC<ImagePickerProps> = ({
   };
 
   const takePhoto = async () => {
-    const hasPermission = await requestCameraPermission();
-    if (!hasPermission) {
-      Alert.alert('Permission needed', 'Camera permissions are required');
-      return;
-    }
-
     setLoading(true);
     try {
       const result = await launchCamera({
@@ -156,23 +117,27 @@ export const ImagePickerComponent: React.FC<ImagePickerProps> = ({
           {loading ? (
             <ActivityIndicator size="large" color="#007AFF" />
           ) : (
-            <>
+            <View style={styles.cardsContainer}>
               <TouchableOpacity
-                style={styles.button}
+                style={styles.card}
                 onPress={pickImage}
                 disabled={disabled}
               >
-                <Text style={styles.buttonText}>📱 Choose from Gallery</Text>
+                <Icon name="image-multiple" size={48} color="#007AFF" />
+                <Text style={styles.cardTitle}>Gallery</Text>
+                <Text style={styles.cardSubtitle}>Choose from photos</Text>
               </TouchableOpacity>
-              <Text style={styles.separator}>or</Text>
+
               <TouchableOpacity
-                style={styles.button}
+                style={styles.card}
                 onPress={takePhoto}
                 disabled={disabled}
               >
-                <Text style={styles.buttonText}>📷 Take a Photo</Text>
+                <Icon name="camera" size={48} color="#007AFF" />
+                <Text style={styles.cardTitle}>Camera</Text>
+                <Text style={styles.cardSubtitle}>Take a new photo</Text>
               </TouchableOpacity>
-            </>
+            </View>
           )}
         </View>
       )}
@@ -187,35 +152,64 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 8,
-    color: '#333',
+    marginBottom: 12,
+    color: '#000',
   },
   uploadArea: {
-    borderWidth: 2,
-    borderColor: '#E0E0E0',
-    borderRadius: 8,
-    padding: 20,
+    padding: 0,
     alignItems: 'center',
-    backgroundColor: '#F9F9F9',
+    backgroundColor: 'transparent',
+    gap: 16,
+  },
+  cardsContainer: {
+    flexDirection: 'row',
+    gap: 12,
+    width: '100%',
+  },
+  card: {
+    flex: 1,
+    backgroundColor: '#F2F2F7',
+    borderRadius: 8,
+    padding: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  cardTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#000',
+    marginTop: 2,
+  },
+  cardSubtitle: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: '#666',
+    textAlign: 'center',
   },
   button: {
     backgroundColor: '#007AFF',
     paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 6,
+    paddingHorizontal: 16,
+    borderRadius: 8,
     marginVertical: 8,
     width: '100%',
   },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+  },
   buttonText: {
     color: 'white',
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
-    textAlign: 'center',
   },
   separator: {
     color: '#999',
     marginVertical: 8,
-    fontSize: 12,
+    fontSize: 13,
   },
   previewContainer: {
     position: 'relative',

@@ -1,7 +1,5 @@
-import axios from 'axios';
-import Constants from 'expo-constants';
-
-const API_BASE_URL = process.env.REACT_APP_BASE_URL || 'http://localhost:3000/api';
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import { API_BASE_URL, LOG_LEVEL } from '../config';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -12,17 +10,46 @@ const apiClient = axios.create({
   },
 });
 
-// Add token to requests if available
-apiClient.interceptors.request.use(async (config) => {
-  // Add auth token if needed
-  return config;
-});
-
-apiClient.interceptors.response.use(
-  (response) => response,
+// Request interceptor - log headers and request
+apiClient.interceptors.request.use(
+  (config) => {
+    if (LOG_LEVEL === 'debug') {
+      console.group('📤 API REQUEST');
+      console.log('URL:', `${config.baseURL}${config.url}`);
+      console.log('Method:', config.method?.toUpperCase());
+      console.log('Headers:', config.headers);
+      console.log('Data:', config.data);
+      console.groupEnd();
+    }
+    return config;
+  },
   (error) => {
-    console.error('API Error:', error);
-    throw error;
+    console.error('Request Error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor - log response and handle errors
+apiClient.interceptors.response.use(
+  (response: AxiosResponse) => {
+    if (LOG_LEVEL === 'debug') {
+      console.group('📥 API RESPONSE');
+      console.log('URL:', response.config.url);
+      console.log('Status:', response.status);
+      console.log('Headers:', response.headers);
+      console.log('Data:', response.data);
+      console.groupEnd();
+    }
+    return response;
+  },
+  (error: AxiosError) => {
+    console.group('❌ API ERROR');
+    console.error('URL:', error.config?.url);
+    console.error('Status:', error.response?.status);
+    console.error('Headers:', error.response?.headers);
+    console.error('Error Data:', error.response?.data || error.message);
+    console.groupEnd();
+    return Promise.reject(error);
   }
 );
 

@@ -2,12 +2,7 @@ import React from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { Controller } from 'react-hook-form';
 import { FormSelect } from './FormSelect';
-
-const WATERMARK_TYPES = [
-  { label: 'None', value: 'none', help: 'No watermark' },
-  { label: 'Logo', value: 'logo', help: 'Logo watermark' },
-  { label: 'Text', value: 'text', help: 'Text watermark' },
-];
+import PHOTOSHOOT_OPTIONS from '../constants/photoshootOptions';
 
 interface WatermarkSelectorProps {
   control: any;
@@ -32,7 +27,7 @@ export const WatermarkSelector: React.FC<WatermarkSelectorProps> = ({
             label="Watermark Type"
             value={value}
             onValueChange={onChange}
-            options={WATERMARK_TYPES}
+            options={PHOTOSHOOT_OPTIONS.watermarkType}
           />
         )}
       />
